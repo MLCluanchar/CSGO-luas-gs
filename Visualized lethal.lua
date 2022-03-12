@@ -121,5 +121,5 @@ local function on_paint()
             end
         end
     end
-
+--owo
 client.set_event_callback('paint', on_paint)
