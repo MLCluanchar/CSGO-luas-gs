@@ -48,7 +48,7 @@ client.set_event_callback('setup_command', function(cmd)
     if cmd.chokedcommands ~= 0 then return end
     if velocity() > 120 then return end
     if ui.get(references.jitter[2]) < 60 then
-        ui.set(references.yaw[2], anti_aim.get_overlap(rotation) > 0.77 and antiaim_yaw_jitter(15,-25) or 0)
+        ui.set(references.yaw[2], anti_aim.get_overlap(rotation) > 0.63 and antiaim_yaw_jitter(15,-25) or 0)
     end
     if ui.get(references.jitter[2]) > 60 then
         ui.set(references.yaw[2], anti_aim.get_overlap(rotation) > 0.84 and antiaim_yaw_jitter(15,-25) or 0)
