@@ -24,8 +24,11 @@ local vars = {
     chocke = 0
 
 }
+<<<<<<< HEAD
 local a = ui.new_slider("AA", "Anti-aimbot angles", "1", -180, 180, 40, true, "")
 local b = ui.new_slider("AA", "Anti-aimbot angles", "2", -180, 180, -40, true, "")
+=======
+>>>>>>> parent of 7e5b2c6 (Update Avoid overlap.lua)
 
 local function antiaim_yaw_jitter(a,b)
 
@@ -35,6 +38,7 @@ local function antiaim_yaw_jitter(a,b)
     end
     return vars.y_reversed >= 1 and a or b
 end
+<<<<<<< HEAD
 
 client.set_event_callback('setup_command', function(cmd)
     if cmd.chokedcommands ~= 0 then return end
@@ -71,3 +75,35 @@ client.set_event_callback('setup_command', function(cmd)
         else return end
     end
 end)
+=======
+local status
+client.set_event_callback('setup_command', function(cmd)
+    -----------Moving overlap
+    if cmd.chokedcommands ~= 0 then return end
+    if velocity() < 120 then return end
+    if ui.get(references.jitter[2]) < 60 then
+        ui.set(references.yaw[2], anti_aim.get_overlap(rotation) > 0.77 and antiaim_yaw_jitter(15,-25) or 0)
+    end
+    if ui.get(references.jitter[2]) > 60 then
+        ui.set(references.yaw[2], anti_aim.get_overlap(rotation) > 0.97 and antiaim_yaw_jitter(15,-25) or 0)
+    end
+    end)
+
+client.set_event_callback('setup_command', function(cmd)
+    -----------Standing overlap
+    if cmd.chokedcommands ~= 0 then return end
+    if velocity() > 120 then return end
+    if ui.get(references.jitter[2]) < 60 then
+        ui.set(references.yaw[2], anti_aim.get_overlap(rotation) > 0.63 and antiaim_yaw_jitter(15,-25) or 0)
+    end
+    if ui.get(references.jitter[2]) > 60 then
+        ui.set(references.yaw[2], anti_aim.get_overlap(rotation) > 0.84 and antiaim_yaw_jitter(15,-25) or 0)
+    end
+    if anti_aim.get_overlap(rotation) > 0.77 then
+        status = "FAKE YAW"
+    else
+        status = "OVERLAP"
+    end
+    print(status..anti_aim.get_overlap(rotation))
+end)
+>>>>>>> parent of 7e5b2c6 (Update Avoid overlap.lua)
