@@ -1,8 +1,8 @@
-
 ----------------------------Reminder
 --Why are you overlaping?
 --Your yaw function not working properly in specific time frame
---Use overlap to detect your overlap satus and gives a break so it can be run it again
+--Use overlap to detect your antiaim and gives a break so it can be run again
+
 local anti_aim = require 'gamesense/antiaim_funcs'
 local function velocity()
     local me = entity.get_local_player()
@@ -24,11 +24,8 @@ local vars = {
     chocke = 0
 
 }
-<<<<<<< HEAD
 local a = ui.new_slider("AA", "Anti-aimbot angles", "1", -180, 180, 40, true, "")
-local b = ui.new_slider("AA", "Anti-aimbot angles", "2", -180, 180, -40, true, "")
-=======
->>>>>>> parent of 7e5b2c6 (Update Avoid overlap.lua)
+local b = ui.new_slider("AA", "Anti-aimbot angles", "1", -180, 180, -40, true, "")
 
 local function antiaim_yaw_jitter(a,b)
 
@@ -38,72 +35,29 @@ local function antiaim_yaw_jitter(a,b)
     end
     return vars.y_reversed >= 1 and a or b
 end
-<<<<<<< HEAD
-
-client.set_event_callback('setup_command', function(cmd)
-    if cmd.chokedcommands ~= 0 then return end
-    print(anti_aim.get_overlap(rotation))
-    ui.set(references.body_yaw[2],antiaim_yaw_jitter(ui.get(a),ui.get(b)))
-end)
-
-client.set_event_callback('setup_command', function(cmd)
-    -----------Moving overlap (Jitter)
-    --send packets can be considered not using it
-    --The function automatic stop if anti aim is not meeting the overlap requirement
-    if cmd.chokedcommands ~= 0 then return end
-    if velocity() < 120 then return end
-    if references.body_yaw ~= "Jitter" then return end
-    if ui.get(references.jitter[2]) < 60 and anti_aim.get_overlap(rotation) > 0.77 then
-            ui.set(references.yaw[2], antiaim_yaw_jitter(ui.get(a),ui.get(b)))
-        else if ui.get(references.jitter[2]) > 60 and anti_aim.get_overlap(rotation) > 0.77 then
-            ui.set(references.yaw[2], antiaim_yaw_jitter(ui.get(a),ui.get(b)))
-        else 
-            return end
-        end
-    end)
-
-client.set_event_callback('setup_command', function(cmd)
-    -----------Standing overlap (Jitter)
-    --send packets can be considered not using it
-    --The function automatic stop if anti aim is not meeting the overlap requirement
-    if cmd.chokedcommands ~= 0 then return end
-    if velocity() > 120 then return end
-    if ui.get(references.jitter[2]) < 60 and anti_aim.get_overlap(rotation) > 0.8 then
-            ui.set(references.yaw[2], antiaim_yaw_jitter(ui.get(a),ui.get(b)))
-        else if ui.get(references.jitter[2]) > 60 and anti_aim.get_overlap(rotation) > 0.77 then
-            ui.set(references.yaw[2], antiaim_yaw_jitter(ui.get(a),ui.get(b)))
-        else return end
-    end
-end)
-=======
-local status
 client.set_event_callback('setup_command', function(cmd)
     -----------Moving overlap
+    --send packets can be considered not using it
     if cmd.chokedcommands ~= 0 then return end
     if velocity() < 120 then return end
-    if ui.get(references.jitter[2]) < 60 then
-        ui.set(references.yaw[2], anti_aim.get_overlap(rotation) > 0.77 and antiaim_yaw_jitter(15,-25) or 0)
-    end
-    if ui.get(references.jitter[2]) > 60 then
-        ui.set(references.yaw[2], anti_aim.get_overlap(rotation) > 0.97 and antiaim_yaw_jitter(15,-25) or 0)
+    if ui.get(references.jitter[2]) < 60 and anti_aim.get_overlap(rotation) > 0.77 then
+        ui.set(references.yaw[2], antiaim_yaw_jitter(ui.get(a),ui.get(b)))
+    else if ui.get(references.jitter[2]) > 60 and anti_aim.get_overlap(rotation) > 0.77 then
+        ui.set(references.yaw[2], antiaim_yaw_jitter(ui.get(a),ui.get(b)))
+    else 
+        return end
     end
     end)
 
 client.set_event_callback('setup_command', function(cmd)
     -----------Standing overlap
+    --send packets can be considered not using it
     if cmd.chokedcommands ~= 0 then return end
     if velocity() > 120 then return end
-    if ui.get(references.jitter[2]) < 60 then
-        ui.set(references.yaw[2], anti_aim.get_overlap(rotation) > 0.63 and antiaim_yaw_jitter(15,-25) or 0)
-    end
-    if ui.get(references.jitter[2]) > 60 then
-        ui.set(references.yaw[2], anti_aim.get_overlap(rotation) > 0.84 and antiaim_yaw_jitter(15,-25) or 0)
-    end
-    if anti_aim.get_overlap(rotation) > 0.77 then
-        status = "FAKE YAW"
-    else
-        status = "OVERLAP"
-    end
-    print(status..anti_aim.get_overlap(rotation))
+    if ui.get(references.jitter[2]) < 60 and anti_aim.get_overlap(rotation) > 0.63 then
+        ui.set(references.yaw[2], antiaim_yaw_jitter(ui.get(a),ui.get(b)))
+    else if ui.get(references.jitter[2]) > 60 and anti_aim.get_overlap(rotation) > 0.84 then
+        ui.set(references.yaw[2], antiaim_yaw_jitter(ui.get(a),ui.get(b)))
+    else return end
+end
 end)
->>>>>>> parent of 7e5b2c6 (Update Avoid overlap.lua)
