@@ -103,7 +103,7 @@ local m_render_engine = (function()
 		renderer_circle_outline(x + round, y + width - round + 1, color_r, color_g, color_b, alpha, round, 90, 0.25, 2)
 		renderer_circle_outline(x + long - round, y + width - round + 1, color_r, color_g, color_b, alpha, round, 0, 0.25, 2)
 	end;
-	local Round = 8;
+	local Round = 5;
     --Container Alpha
 	local n = 45;
     --Glow Object
@@ -111,18 +111,18 @@ local m_render_engine = (function()
 	local container_uphalf = function(x, y, long, width, round, color_r, color_g, color_b, alpha, alpha_glow)
         --Main line from upper
 		--renderer_rectangle(x + round, y, long - round * 2, 2, color_r, color_g, color_b, alpha)
-        renderer_gradient(x + round, y, long / 25, 2, color_r, color_g, color_b, alpha, color_r, color_g, color_b, 0, true)
+        renderer_gradient(x + round, y, long / 10, 1, color_r, color_g, color_b, alpha, color_r, color_g, color_b, 0, true)
         --Upper left/right circle
 		renderer_circle_outline(x + round, y + round, color_r, color_g, color_b, alpha, round, 180, 0.25, 2)
-		renderer_circle_outline(x + long - round, y + round, color_r, color_g, color_b, alpha, round, 270, 0.25, 2)
+		--renderer_circle_outline(x + long - round, y + round, color_r, color_g, color_b, alpha, round, 270, 0.25, 2)
         --Left/Right Gradient
-		renderer_gradient(x, y + round, 2, width - round * 2, color_r, color_g, color_b, alpha, color_r, color_g, color_b, alpha, false)
-		renderer_gradient(x + long - 2, y + round, 2, width - round * 2, color_r, color_g, color_b, alpha, color_r, color_g, color_b, alpha, false)
+		renderer_gradient(x, y + round, 1, width - round * 2, color_r, color_g, color_b, alpha, color_r, color_g, color_b, alpha, false)
+		--renderer_gradient(x + long - 2, y + round, 2, width - round * 2, color_r, color_g, color_b, alpha, color_r, color_g, color_b, alpha, false)
         --Down left/right circle
 		renderer_circle_outline(x + round, y + width - round, color_r, color_g, color_b, alpha, round, 90, 0.25, 2)
-		renderer_circle_outline(x + long - round, y + width - round, color_r, color_g, color_b, alpha, round, 0, 0.25, 2)
+		--renderer_circle_outline(x + long - round, y + width - round, color_r, color_g, color_b, alpha, round, 0, 0.25, 2)
         --Main line from down
-		renderer_gradient(x + round, y + width - 2, long / 25, 2, color_r, color_g, color_b, alpha, 17, 17, 17, 0, true)
+		renderer_gradient(x + round, y + width - 1, long / 10, 1, color_r, color_g, color_b, alpha, 17, 17, 17, 0, true)
 		--renderer_rectangle(x + round, y + width - 2, long - round * 2, 2, color_r, color_g, color_b, n + 50)
 		for r = 1, alpha_glow do
 			glow_color(x - r, y - r, long + r * 2, width + r * 2, round, color_r, color_g, color_b, alpha_glow - r)
@@ -174,7 +174,7 @@ local ms_ieinfo = ui_new_checkbox('CONFIG', 'Presets', 'Frequency update informa
 
 local ms_palette, ms_color = 
 	ui_new_combobox('CONFIG', 'Presets', 'Solus Palette', menu_palette),
-	ui_new_color_picker('CONFIG', 'Presets', 'Solus Global color', 142, 165, 229, 85)
+	ui_new_color_picker('CONFIG', 'Presets', 'Solus Global color', 142, 165, 229, 185)
 
 local ms_fade_offset = ui_new_slider('CONFIG', 'Presets', 'Fade offset', 1, 1000, 825, false, nil, 0.001)
 local ms_fade_frequency = ui_new_slider('CONFIG', 'Presets', 'Fade frequency', 1, 100, 10, false, nil, 0.01)
@@ -421,7 +421,7 @@ end
 local ms_classes = {
 	watermark = function()
 		local note = notes 'a_watermark'
-		local cstyle = { [1] = 'gamesense', [2] = 'gamesense.pub', [3] = 'skeet', [4] = 'skeet.cc' }
+		local cstyle = { [1] = 'game\a7CFC00FFsense\aFFFFFFFF', [2] = 'game\a7CFC00FFsense\aFFFFFFFF', [3] = 'skeet', [4] = 'skeet.cc' }
 
 		local has_beta = pcall(ui_reference, 'misc', 'Settings', 'Crash logs')
 		local get_name = panorama_loadstring([[ return MyPersonaAPI.GetName() ]])

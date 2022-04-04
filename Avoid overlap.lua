@@ -28,7 +28,7 @@ local a = ui.new_slider("AA", "Anti-aimbot angles", "1", -180, 180, 40, true, ""
 local b = ui.new_slider("AA", "Anti-aimbot angles", "1", -180, 180, -40, true, "")
 
 local function antiaim_yaw_jitter(a,b)
-
+    print(anti_aim.get_overlap(rotation))
     if globals.tickcount() - vars.y_vars > 1  then
         vars.y_reversed = vars.y_reversed == 1 and 0 or 1
         vars.y_vars = globals.tickcount()
@@ -44,8 +44,7 @@ client.set_event_callback('setup_command', function(cmd)
         ui.set(references.yaw[2], antiaim_yaw_jitter(ui.get(a),ui.get(b)))
     else if ui.get(references.jitter[2]) > 60 and anti_aim.get_overlap(rotation) > 0.77 then
         ui.set(references.yaw[2], antiaim_yaw_jitter(ui.get(a),ui.get(b)))
-    else 
-        return end
+    else return end
     end
     end)
 
