@@ -16,7 +16,13 @@ local notes = function(b)local c=function(d,e)local f={}for g in pairs(d)do tabl
 local item_count = function(b)if b==nil then return 0 end;if#b==0 then local c=0;for d in pairs(b)do c=c+1 end;return c end;return#b end
 local contains = function(b,c)for d=1,#b do if b[d]==c then return true end end;return false end
 local create_integer = function(b,c,d,e)return{min=b,max=c,init_val=d,scale=e,value=d}end
-
+function lerp(start, vend, time)
+	return start + (vend - start) * time end
+	local ani = {
+		width_specators = 0,
+		width_keybinds = 0,
+	}
+	
 local read_database = function(script_name, db_name, original)
 	if (script_name == nil or script_name == '') or (db_name == nil or db_name == '') or (original == nil or original == { }) then
 		client_color_log(216, 181, 121, ('[%s] \1\0'):format(script_name))
@@ -103,12 +109,33 @@ local m_render_engine = (function()
 		renderer_circle_outline(x + round, y + width - round + 1, color_r, color_g, color_b, alpha, round, 90, 0.25, 2)
 		renderer_circle_outline(x + long - round, y + width - round + 1, color_r, color_g, color_b, alpha, round, 0, 0.25, 2)
 	end;
-	local Round = 5;
-    --Container Alpha
-	local n = 45;
+	--Circle Round
+	local Round = 3;
+    --Container Downword Alpha
+	local n = 30;
     --Glow Object
-	local o = 15;
+	local o = 8;
 	local container_uphalf = function(x, y, long, width, round, color_r, color_g, color_b, alpha, alpha_glow)
+        --Main line from upper
+		renderer_rectangle(x + round, y, long - round * 2, 1, color_r, color_g, color_b, alpha)
+        --Upper left/right circle
+		renderer_circle_outline(x + round, y + round, color_r, color_g, color_b, alpha, round - 1, 180, 0.25, 2)
+		renderer_circle_outline(x + long - round, y + round, color_r, color_g, color_b, alpha, round - 1, 270, 0.25, 2)
+        --Left/Right Gradient
+		renderer_gradient(x, y + round, 1, width - round * 2, color_r, color_g, color_b, alpha, color_r, color_g, color_b, n, false)
+		renderer_gradient(x + long - 2, y + round, 1, width - round * 2, color_r, color_g, color_b, alpha, color_r, color_g, color_b, n, false)
+        --Down left/right circle
+		renderer_circle_outline(x + round, y + width - round, color_r, color_g, color_b, n, round - 1, 90, 0.25, 2)
+		renderer_circle_outline(x + long - round, y + width - round, color_r, color_g, color_b, n, round - 1, 0, 0.25, 2)
+        --Main line from down
+		renderer_rectangle(x + round, y + width - 2, long - round * 2, 1, color_r, color_g, color_b, n)
+
+		for r = 1, alpha_glow do
+			glow_color(x - r, y - r, long + r * 2, width + r * 2, round, color_r, color_g, color_b, alpha_glow - r)
+		end
+	end;
+	--Main Theme for container
+		local container_lefthalf = function(x, y, long, width, round, color_r, color_g, color_b, alpha, alpha_glow)
         --Main line from upper
 		--renderer_rectangle(x + round, y, long - round * 2, 2, color_r, color_g, color_b, alpha)
         renderer_gradient(x + round, y, long / 10, 1, color_r, color_g, color_b, alpha, color_r, color_g, color_b, 0, true)
@@ -122,17 +149,19 @@ local m_render_engine = (function()
 		renderer_circle_outline(x + round, y + width - round, color_r, color_g, color_b, alpha, round, 90, 0.25, 2)
 		--renderer_circle_outline(x + long - round, y + width - round, color_r, color_g, color_b, alpha, round, 0, 0.25, 2)
         --Main line from down
-		renderer_gradient(x + round, y + width - 1, long / 10, 1, color_r, color_g, color_b, alpha, 17, 17, 17, 0, true)
+		renderer_gradient(x + round, y + width - 2, long / 10, 1, color_r, color_g, color_b, alpha, 17, 17, 17, 0, true)
 		--renderer_rectangle(x + round, y + width - 2, long - round * 2, 2, color_r, color_g, color_b, n + 50)
 		for r = 1, alpha_glow do
 			glow_color(x - r, y - r, long + r * 2, width + r * 2, round, color_r, color_g, color_b, alpha_glow - r)
 		end
 	end;
+	a.render_halfcontainer = function(x, y, long, width, color_red, color_green, color_blue, alpha, w)
+		container_lefthalf(x, y, long, width, Round, color_red, color_green, color_blue, alpha, o )
+	end;
+	local ar, ag, ab, aa = 15, 15, 15, 80
 	a.render_container = function(x, y, long, width, color_red, color_green, color_blue, alpha, w)
-        local ind_r, ind_g, ind_b, ind_a = 17, 17, 17, 80
-		renderer.blur(x, y, long, width, 100, 100)
-		container_main(x, y, long, width, Round , ind_r, ind_g, ind_b, ind_a)
-		container_uphalf(x, y, long, width, Round, color_red, color_green, color_blue, alpha, o )
+		container_main(x, y, long, width, Round, ar, ag, ab, aa)
+		container_uphalf(x, y, long, width, Round, color_red, color_green, color_blue, alpha, o)
 		if w then
 			w(x + Round, y + Round, long - Round * 2, width - Round * 2)
 		end
@@ -146,8 +175,8 @@ local m_render_engine = (function()
 		for r = 1, glow_alpha do
 			renderer_circle_outline(x1, y1, glow_r, glow_g, glow_b, glow_alpha - r, r, E + 90, 0.5, 1)
 			renderer_circle_outline(x2, y2, glow_r, glow_g, glow_b, glow_alpha - r, r, E - 90, 0.5, 1)
-			local F = vector(math_cos(math_rad(E + 90)), math_sin(math_rad(E + 90)), 0):scaled(r * 0.95)
-			local G = vector(math_cos(math_rad(E - 90)), math_sin(math_rad(E - 90)), 0):scaled(r * 0.95)
+			local F = vector(math.cos(math_rad(E + 90)), math.sin(math.rad(E + 90)), 0):scaled(r * 0.95)
+			local G = vector(math.cos(math_rad(E - 90)), math.sin(math.rad(E - 90)), 0):scaled(r * 0.95)
 			local H = F + C;
 			local I = F + D;
 			local J = G + C;
@@ -174,7 +203,7 @@ local ms_ieinfo = ui_new_checkbox('CONFIG', 'Presets', 'Frequency update informa
 
 local ms_palette, ms_color = 
 	ui_new_combobox('CONFIG', 'Presets', 'Solus Palette', menu_palette),
-	ui_new_color_picker('CONFIG', 'Presets', 'Solus Global color', 142, 165, 229, 185)
+	ui_new_color_picker('CONFIG', 'Presets', 'Solus Global color', 142, 165, 229, 85)
 
 local ms_fade_offset = ui_new_slider('CONFIG', 'Presets', 'Fade offset', 1, 1000, 825, false, nil, 0.001)
 local ms_fade_frequency = ui_new_slider('CONFIG', 'Presets', 'Fade frequency', 1, 100, 10, false, nil, 0.01)
@@ -421,7 +450,7 @@ end
 local ms_classes = {
 	watermark = function()
 		local note = notes 'a_watermark'
-		local cstyle = { [1] = 'game\a7CFC00FFsense\aFFFFFFFF', [2] = 'game\a7CFC00FFsense\aFFFFFFFF', [3] = 'skeet', [4] = 'skeet.cc' }
+		local cstyle = { [1] = 'gamesense', [2] = 'gamesense.pub', [3] = 'skeet', [4] = 'skeet.cc' }
 
 		local has_beta = pcall(ui_reference, 'misc', 'Settings', 'Crash logs')
 		local get_name = panorama_loadstring([[ return MyPersonaAPI.GetName() ]])
@@ -670,19 +699,23 @@ local ms_classes = {
 
 		
 			for c_name, c_ref in pairs(m_active) do
-				m_render_engine.render_container(x, y, w, 22, r, g, b, m_alpha*255)
+				--m_render_engine.render_container(x, y, w , 50 + height_offset, r, g, b, m_alpha*255)
+				--renderer_gradient(x, y + 20, 140, 2, 142, 165, 229, 130, 142, 165, 229, 130, true)
 
 				local _, text_h = renderer_measure_text(nil, c_ref.name)
-				renderer_text(x + ((c_ref.avatar and not right_offset) and text_h or -5) + 10, y + height_offset, 255, 255, 255, m_alpha*c_ref.alpha*255, '', 0, c_ref.name)
+				renderer_text(x + ((c_ref.avatar and not right_offset) and text_h or -5) + 10 , y + height_offset, 255, 255, 255, m_alpha*c_ref.alpha*255, '', 0, c_ref.name)
 		
 				if c_ref.avatar ~= nil then
 					renderer_texture(c_ref.avatar, x + (right_offset and w - 15 or 5), y + height_offset, text_h, text_h, 255, 255, 255, m_alpha*c_ref.alpha*255, 'f')
 				end
-				
 				--renderer.blur(x, y + height_offset - 3,w,18)
 				height_offset = height_offset + 15
+				ani.width_specators = lerp(ani.width_specators, height_offset + 15 ,globals.frametime() * 6)
 			end
-		
+			local width_floor = math.floor(ani.width_specators)
+			if height_offset > 23 then
+				m_render_engine.render_container(x, y, w , 23, r, g, b, a)
+			end
 			renderer_text(x - renderer_measure_text(nil, text) / 2 + w/2, y + 4, 255, 255, 255, m_alpha*255, '', 0, text)
 			dragging:drag(w, (3 + (15 * item_count(m_active))) * 2)
 
@@ -869,9 +902,18 @@ local ms_classes = {
 			local text = 'keybinds'
 			local x, y = dragging:get()
 			local r, g, b, a = get_bar_color()
-		
+			if maximum_offset > 66 then
+				ani.width_keybinds = lerp(ani.width_keybinds,79,globals.frametime() * 6)
+				else if maximum_offset == 66 then
+					ani.width_keybinds = lerp(ani.width_keybinds,48,globals.frametime() * 6)
+					else if maximum_offset < 66 then
+						ani.width_keybinds = math.floor(lerp(ani.width_keybinds,0,globals.frametime() * 6))
+					end
+				end
+			end
+			local floor_width = math.floor(ani.width_keybinds)
 			local height_offset = 23
-			local w, h = 75 + maximum_offset, 50
+			local w, h = 75 + floor_width, 50
 		
 			if ui_get(ms_palette) == menu_palette[1] then
 				--renderer_rectangle(x, y, w, 2, r, g, b, m_alpha*255)
@@ -879,15 +921,17 @@ local ms_classes = {
 				--renderer_gradient(x, y, (w/2)+1, 2, g, b, r, m_alpha*255, r, g, b, m_alpha*255, true)
 				--renderer_gradient(x + w/2, y, w-w/2, 2, r, g, b, m_alpha*255, b, r, g, m_alpha*255, true)
 			end
-		
 			for c_name, c_ref in pairs(m_active) do
 				local key_type = '[' .. (c_ref.mode or '?') .. ']'
-				m_render_engine.render_container(x, y, w, 22, r, g, b, m_alpha*255)
 				renderer_text(x + 5, y + height_offset, 255, 255, 255, m_alpha*c_ref.alpha*255, '', 0, c_name)
 				renderer_text(x + w - renderer_measure_text(nil, key_type) - 5, y + height_offset, 255, 255, 255, m_alpha*c_ref.alpha*255, '', 0, key_type)
 				--renderer.blur(x, y + height_offset - 3,w,18)
 				--m_render_engine.render_container(x, y + height_offset, w, h, r, g, b, m_alpha*255)
 				height_offset = height_offset + 15
+			end
+			local floor_height = math.floor(height_offset)
+			if height_offset > 23 then
+				m_render_engine.render_container(x, y, w, 23 , r, g, b, a)
 			end
 			renderer_text(x - renderer_measure_text(nil, text) / 2 + w/2, y + 4, 255, 255, 255, m_alpha*255, '', 0, text)
 			dragging:drag(w, (3 + (15 * item_count(m_active))) * 2)
@@ -1040,6 +1084,7 @@ local ms_classes = {
         
                 renderer_gradient(x, y, 2, h / 2, dec[1], dec[2], dec[3], 0, r, g, b, 255, false)
                 renderer_gradient(x, y + h/2, 2, h / 2, r, g, b, 255, dec[1], dec[2], dec[3], 0, false)
+				m_render_engine.render_halfcontainer(x, y, 2, h, dec[1], dec[2], dec[3], 255)
         
                 -- BACKGROUND GRADIENT
                 --renderer_gradient(x - w - 4, y, w / 2, h, 17, 17, 17, 25,  17, 17, 17, a, true)
